@@ -22,6 +22,24 @@ const PROTECTED = [
 ];
 
 /**
+ * Resolve the public API host (e.g. "dev.api.venueonmyplate.com"). Derived from
+ * NEXT_PUBLIC_API_URL, with an optional explicit API_LANDING_HOST override. When
+ * neither is configured (local dev), returns null so the root keeps redirecting
+ * to the dashboard.
+ */
+function apiLandingHost(): string | null {
+  const explicit = process.env.API_LANDING_HOST?.trim();
+  if (explicit) return explicit.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+  const base = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (!base) return null;
+  try {
+    return new URL(base).host;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Edge middleware only checks that a session cookie exists so it can redirect
  * unauthenticated visitors before rendering. The real authorisation check
  * (valid, unexpired session + permission) always happens on the server in each
@@ -51,6 +69,19 @@ export function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 204, headers });
   }
 
+  // Root of the API sub-domain serves the public API landing page. The admin
+  // sub-domain keeps its existing behaviour (root → /dashboard). /api and
+  // /uploads are never touched here.
+  if (pathname === "/") {
+    const host = request.headers.get("host")?.toLowerCase() ?? "";
+    const landingHost = apiLandingHost()?.toLowerCase();
+    if (landingHost && host === landingHost) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/api-landing";
+      return NextResponse.rewrite(url);
+    }
+  }
+
   const hasSession = Boolean(request.cookies.get(SESSION_COOKIE)?.value);
   const isProtected = PROTECTED.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`)
@@ -71,6 +102,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
     "/api/:path*",
     "/dashboard/:path*",
     "/venues/:path*",
