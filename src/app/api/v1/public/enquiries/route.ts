@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const ip = clientIp(req) || "unknown";
-    const limit = rateLimit(`enquiry:${ip}`, 5, 10 * 60 * 1000);
+    const limit = rateLimit(`enquiry:${ip}`, 10, 10 * 60 * 1000);
     if (!limit.allowed) {
       return apiError("Too many enquiries. Please try again later.", 429, {
         retryAfter: limit.retryAfter,
