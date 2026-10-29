@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Building2, MapPin, Globe, FileText, Star, ImageIcon,
   Settings, LogOut, X, ChevronRight, Inbox, CalendarCheck, Users, ScrollText,
-  LayoutTemplate, PanelsTopLeft,
+  LayoutTemplate, PanelsTopLeft, Loader2,
 } from "lucide-react";
 import { fetchCurrentUser, signOut } from "@/lib/auth";
 import { enquiriesApi } from "@/lib/api";
@@ -77,6 +77,13 @@ export default function Sidebar({ open = true, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [user, setUser] = React.useState<AdminUser | null>(null);
   const [newEnquiries, setNewEnquiries] = React.useState(0);
+  const [signingOut, setSigningOut] = React.useState(false);
+
+  const handleSignOut = React.useCallback(() => {
+    if (signingOut) return; // guard against double-clicks that abort the request
+    setSigningOut(true);
+    void signOut();
+  }, [signingOut]);
 
   React.useEffect(() => {
     fetchCurrentUser().then(setUser);
@@ -172,11 +179,12 @@ export default function Sidebar({ open = true, onClose }: SidebarProps) {
           </div>
         )}
         <button
-          onClick={() => { void signOut(); }}
-          className="flex w-full items-center gap-2.5 px-2.5 py-2 rounded-[8px] text-[13px] text-white/35 hover:text-white/70 hover:bg-white/[0.05] transition-all"
+          onClick={handleSignOut}
+          disabled={signingOut}
+          className="flex w-full items-center gap-2.5 px-2.5 py-2 rounded-[8px] text-[13px] text-white/35 hover:text-white/70 hover:bg-white/[0.05] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          <LogOut size={15} />
-          Sign out
+          {signingOut ? <Loader2 size={15} className="animate-spin" /> : <LogOut size={15} />}
+          {signingOut ? "Signing out…" : "Sign out"}
         </button>
       </div>
     </div>

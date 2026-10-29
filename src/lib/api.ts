@@ -35,6 +35,15 @@ export class ApiError extends Error {
 
 let redirecting = false;
 
+/**
+ * Stop the global 401 handler from navigating to /login. Called during an
+ * explicit sign-out so it does not race with the logout redirect — that race
+ * caused the page to flicker between several /login variants during sign-out.
+ */
+export function suppressAuthRedirect(): void {
+  redirecting = true;
+}
+
 async function request<T>(
   method: string,
   path: string,
@@ -62,9 +71,15 @@ async function request<T>(
   }
 
   if (res.status === 401) {
-    if (typeof window !== "undefined" && !redirecting) {
+    // Only one redirect, and never from the login page itself (which would loop
+    // /login?next=/login). An explicit sign-out suppresses this entirely.
+    if (
+      typeof window !== "undefined" &&
+      !redirecting &&
+      window.location.pathname !== "/login"
+    ) {
       redirecting = true;
-      const next = encodeURIComponent(window.location.pathname);
+      const next = encodeURIComponent(window.location.pathname + window.location.search);
       window.location.href = `/login?next=${next}`;
     }
     throw new ApiError("Your session has expired. Please sign in again.", 401);

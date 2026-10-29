@@ -5,7 +5,7 @@
  * read the session token, and nothing is stored in localStorage. The current
  * user is fetched from the server instead of being cached in the browser.
  */
-import { authApi } from "./api";
+import { authApi, suppressAuthRedirect } from "./api";
 import type { AdminUser } from "@/types";
 
 let cached: AdminUser | null = null;
@@ -42,8 +42,13 @@ export function clearAuthCache(): void {
 /** Sign out on the server and send the browser to the login screen. */
 export async function signOut(): Promise<void> {
   clearAuthCache();
+  // Suppress the global 401 handler so in-flight admin requests that fail once
+  // the cookie is cleared do not race with this redirect (which made the page
+  // flicker between several /login variants during sign-out).
+  suppressAuthRedirect();
   await authApi.logout();
-  if (typeof window !== "undefined") window.location.href = "/login";
+  // Use replace() for a single, clean navigation with no extra history entry.
+  if (typeof window !== "undefined") window.location.replace("/login");
 }
 
 /** @deprecated Retained so older imports keep working; there is no token to store. */
