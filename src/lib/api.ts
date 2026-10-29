@@ -43,15 +43,18 @@ async function request<T>(
   const headers: Record<string, string> = {};
   if (body !== undefined) headers["Content-Type"] = "application/json";
 
+  // Public endpoints use a wildcard CORS policy (Access-Control-Allow-Origin: *)
+  // and require no authentication. A credentialed request against a wildcard
+  // origin is rejected by the browser when cross-origin, so omit credentials for
+  // public paths; admin paths still send the HttpOnly session cookie.
+  const isPublic = path.startsWith("/api/v1/public/");
+
   let res: Response;
   try {
     res = await fetch(`${API}${path}`, {
       method,
       headers,
-      // "include" so the HttpOnly session cookie is sent even when the admin UI
-      // (dev-admin.venueonmyplate.com) and the API (dev.api.venueonmyplate.com)
-      // are on different sub-domains. Same-origin deployments are unaffected.
-      credentials: "include",
+      credentials: isPublic ? "omit" : "include",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
