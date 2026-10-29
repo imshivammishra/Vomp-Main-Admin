@@ -41,6 +41,23 @@ export function sessionCookieOptions(maxAgeSeconds: number) {
   };
 }
 
+/**
+ * A `Set-Cookie` string that immediately expires the session cookie. Returned on
+ * 401 responses so a stale cookie (one whose server session no longer exists —
+ * e.g. after a server restart) is cleared from the browser. Without this, the
+ * middleware (which only checks cookie presence) would keep bouncing /login →
+ * /dashboard while the API keeps returning 401, causing the page to flicker.
+ */
+export function clearedSessionCookieHeader(): string {
+  const o = sessionCookieOptions(0);
+  const parts = [`${SESSION_COOKIE}=`, `Path=${o.path}`, "Max-Age=0", "Expires=Thu, 01 Jan 1970 00:00:00 GMT"];
+  if (o.domain) parts.push(`Domain=${o.domain}`);
+  if (o.httpOnly) parts.push("HttpOnly");
+  if (o.secure) parts.push("Secure");
+  parts.push(`SameSite=${o.sameSite.charAt(0).toUpperCase()}${o.sameSite.slice(1)}`);
+  return parts.join("; ");
+}
+
 export interface LoginResult {
   user: AdminUser;
   token: string;

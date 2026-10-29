@@ -1,4 +1,4 @@
-import { authenticateRequest, can, sameOrigin } from "./auth.server";
+import { authenticateRequest, can, sameOrigin, SESSION_COOKIE, clearedSessionCookieHeader } from "./auth.server";
 import type { AdminUser } from "@/types";
 import { apiError } from "./apiHelpers";
 
@@ -31,7 +31,17 @@ export async function authorize(
 ): Promise<AuthResult> {
   const user = await authenticateRequest(req);
   const ip = clientIp(req);
-  if (!user) return { ok: false, response: apiError("Authentication required", 401) };
+  if (!user) {
+    const response = apiError("Authentication required", 401);
+    // If the browser sent a session cookie but it is no longer valid (expired
+    // or its server session is gone), clear it. Otherwise the cookie-only
+    // middleware check keeps redirecting /login → /dashboard while the API
+    // returns 401, which makes the admin panel flicker in a redirect loop.
+    if ((req.headers.get("cookie") ?? "").includes(`${SESSION_COOKIE}=`)) {
+      response.headers.append("Set-Cookie", clearedSessionCookieHeader());
+    }
+    return { ok: false, response };
+  }
   if (permission && !can(user, permission)) {
     return { ok: false, response: apiError("You do not have permission to do that", 403) };
   }

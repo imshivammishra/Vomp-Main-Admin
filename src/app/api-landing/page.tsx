@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ApiLanding from "./landing";
 
 export const metadata: Metadata = {
-  title: "VenueOnMyPlate API — Simple. Reliable. Connected.",
+  title: { absolute: "VenueOnMyPlate API — Simple. Reliable. Connected." },
   description:
     "The VenueOnMyPlate API powers our venue discovery platform, serving curated venue, city, and content data through a fast, consistent interface.",
   robots: { index: true, follow: true },
