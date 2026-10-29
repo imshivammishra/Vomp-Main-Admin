@@ -1,0 +1,34 @@
+[
+  {
+    "id": "1",
+    "slug": "how-to-choose-venue",
+    "title": "How to Choose the Perfect Wedding Venue",
+    "excerpt": "A practical guide.",
+    "category": "Planning",
+    "author": "Team VOMP",
+    "publishedOn": "2026-09-15",
+    "readingMinutes": 7,
+    "image": "/images/wedding-decor.jpg",
+    "imageAlt": "Wedding venue",
+    "body": [
+      "The venue sets the tone for your entire celebration..."
+    ],
+    "status": "published"
+  },
+  {
+    "id": "2",
+    "slug": "italy-wedding-guide",
+    "title": "Getting Married in Italy: A Complete Guide",
+    "excerpt": "Everything you need to know.",
+    "category": "Destination",
+    "author": "Team VOMP",
+    "publishedOn": "2026-10-01",
+    "readingMinutes": 12,
+    "image": "/images/hero-poster.jpg",
+    "imageAlt": "Italy wedding",
+    "body": [
+      "Italy has long been a dream destination for weddings..."
+    ],
+    "status": "published"
+  }
+]

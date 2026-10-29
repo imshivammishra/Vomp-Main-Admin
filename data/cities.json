@@ -1,0 +1,53 @@
+[
+  {
+    "id": "1",
+    "slug": "udaipur",
+    "name": "Udaipur",
+    "country": "India",
+    "countryCode": "IN",
+    "tagline": "Lakes, palaces and golden-hour pheras.",
+    "description": "India's most loved destination-wedding city.",
+    "image": "/images/udaipur-city.jpg",
+    "imageAlt": "Udaipur",
+    "venueCountLabel": "Curated venues",
+    "popularTypes": [
+      "Palace",
+      "Resort"
+    ],
+    "status": "published"
+  },
+  {
+    "id": "2",
+    "slug": "jaipur",
+    "name": "Jaipur",
+    "country": "India",
+    "countryCode": "IN",
+    "tagline": "Rajput grandeur, an hour from Delhi.",
+    "description": "Forts, garden resorts and city palaces.",
+    "image": "/images/udaipur-palace2.jpg",
+    "imageAlt": "Jaipur",
+    "venueCountLabel": "Curated venues",
+    "popularTypes": [
+      "Fort",
+      "Garden Resort"
+    ],
+    "status": "published"
+  },
+  {
+    "id": "3",
+    "slug": "como",
+    "name": "Lake Como",
+    "country": "Italy",
+    "countryCode": "IT",
+    "tagline": "Villas, gardens and Alpine panoramas.",
+    "description": "Italy's most elegant lakeside wedding destination.",
+    "image": "/images/hero-poster.jpg",
+    "imageAlt": "Lake Como",
+    "venueCountLabel": "Curated venues",
+    "popularTypes": [
+      "Villa",
+      "Hotel"
+    ],
+    "status": "published"
+  }
+]

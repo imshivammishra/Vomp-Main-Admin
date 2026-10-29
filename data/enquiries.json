@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Priya Sharma",
+    "phone": "+91 98765 43210",
+    "email": "priya@example.com",
+    "city": "Udaipur",
+    "eventType": "Wedding",
+    "eventDate": "December 2025",
+    "guestCount": "300-600",
+    "message": "Looking for a palace venue near Lake Pichola",
+    "source": "website",
+    "status": "read",
+    "id": "1",
+    "createdAt": "2026-10-28T15:02:53.596Z"
+  }
+]

@@ -1,0 +1,50 @@
+[
+    {
+        "image":  "",
+        "id":  "1",
+        "createdAt":  "2026-09-20T10:00:00Z",
+        "venueSlug":  "lake-palace-udaipur",
+        "rating":  5,
+        "quote":  "Absolutely magical. Every detail was perfect — the floating palace, the sunset pheras, the hospitality. We could not have asked for more.",
+        "name":  "Priya \u0026 Arjun Sharma",
+        "status":  "published",
+        "context":  "Wedding at Lake Palace",
+        "featured":  true
+    },
+    {
+        "image":  "",
+        "id":  "2",
+        "createdAt":  "2026-10-10T10:00:00Z",
+        "venueSlug":  "villa-d-este-como",
+        "rating":  5,
+        "quote":  "An experience beyond words. Our guests flew in from five countries and every single one said it was the most beautiful wedding they had ever attended.",
+        "name":  "Sophie \u0026 Marco Bianchi",
+        "status":  "published",
+        "context":  "Wedding at Villa d\u0027Este, Como",
+        "featured":  true
+    },
+    {
+        "image":  "",
+        "id":  "3",
+        "createdAt":  "2026-10-05T10:00:00Z",
+        "venueSlug":  "city-palace-jaipur",
+        "rating":  5,
+        "quote":  "The venue team was exceptional. Private pricing, zero surprises, and the courtyard at night was breathtaking. Thank you!",
+        "name":  "Ananya \u0026 Rahul Gupta",
+        "status":  "published",
+        "context":  "Reception at City Palace Jaipur",
+        "featured":  false
+    },
+    {
+        "image":  "",
+        "id":  "4",
+        "createdAt":  "2026-10-12T10:00:00Z",
+        "venueSlug":  "umaid-bhawan-palace",
+        "rating":  5,
+        "quote":  "We compared 12 venues before VOMP sent us their shortlist. Umaid Bhawan was the one. The team made every step effortless.",
+        "name":  "Kavya \u0026 Dev Mehta",
+        "status":  "published",
+        "context":  "Sangeet at Umaid Bhawan Palace",
+        "featured":  false
+    }
+]

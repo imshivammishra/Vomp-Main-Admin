@@ -1,0 +1,26 @@
+import { blogsDb } from "@/lib/database";
+import { seedIfEmpty } from "@/lib/seedDb";
+import { ok, handleError } from "@/lib/apiHelpers";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  try {
+    await seedIfEmpty();
+    const result = await blogsDb.list({ status: "published" });
+    return ok({ data: result.data, total: result.total });
+  } catch (error) {
+    return handleError(error);
+  }
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}

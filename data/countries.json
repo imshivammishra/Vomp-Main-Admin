@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "code": "IN",
+    "name": "India",
+    "flag": "🇮🇳",
+    "active": true,
+    "cityCount": 6,
+    "venueCount": 24
+  },
+  {
+    "id": "2",
+    "code": "IT",
+    "name": "Italy",
+    "flag": "🇮🇹",
+    "active": true,
+    "cityCount": 4,
+    "venueCount": 8
+  },
+  {
+    "id": "3",
+    "code": "FR",
+    "name": "France",
+    "flag": "🇫🇷",
+    "active": false,
+    "cityCount": 0,
+    "venueCount": 0
+  },
+  {
+    "id": "4",
+    "code": "AE",
+    "name": "UAE",
+    "flag": "🇦🇪",
+    "active": false,
+    "cityCount": 0,
+    "venueCount": 0
+  },
+  {
+    "id": "5",
+    "code": "TH",
+    "name": "Thailand",
+    "flag": "🇹🇭",
+    "active": false,
+    "cityCount": 0,
+    "venueCount": 0
+  }
+]
