@@ -20,12 +20,22 @@ export function tokenHash(token: string): string {
 }
 
 export function sessionCookieOptions(maxAgeSeconds: number) {
+  const isProd = process.env.NODE_ENV === "production";
+  // When the admin UI and API live on different sub-domains
+  // (e.g. dev-admin.venueonmyplate.com and dev.api.venueonmyplate.com) the
+  // session cookie must be scoped to the shared parent domain so both the
+  // admin pages (for the middleware redirect check) and the API (for request
+  // auth) receive it. Leave SESSION_COOKIE_DOMAIN unset for same-origin setups.
+  const domain = process.env.SESSION_COOKIE_DOMAIN?.trim() || undefined;
+  // CSRF is independently enforced on the server (sameOrigin + ADMIN_ORIGIN),
+  // so "lax" is safe and keeps cross-sub-domain sign-in reliable.
+  const sameSite = (process.env.SESSION_COOKIE_SAMESITE?.trim() ||
+    (isProd ? "lax" : "lax")) as "strict" | "lax" | "none";
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: (process.env.NODE_ENV === "production" ? "strict" : "lax") as
-      | "strict"
-      | "lax",
+    secure: isProd,
+    sameSite,
+    ...(domain ? { domain } : {}),
     path: "/",
     maxAge: maxAgeSeconds,
   };

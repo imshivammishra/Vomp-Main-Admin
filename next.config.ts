@@ -1,5 +1,38 @@
 import type { NextConfig } from "next";
 
+// The admin UI origin (e.g. https://dev-admin.venueonmyplate.com). When set, the
+// API returns credentialed CORS headers so the admin UI can call the API on a
+// different sub-domain (e.g. https://dev.api.venueonmyplate.com).
+const adminOrigin = (process.env.ADMIN_ORIGIN || "").replace(/\/+$/, "");
+
+const adminCorsHeaders = adminOrigin
+  ? [
+      {
+        source: "/api/v1/admin/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: adminOrigin },
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+          },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
+          { key: "Vary", value: "Origin" },
+        ],
+      },
+      {
+        source: "/api/health",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: adminOrigin },
+          { key: "Access-Control-Allow-Credentials", value: "true" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type, Authorization" },
+          { key: "Vary", value: "Origin" },
+        ],
+      },
+    ]
+  : [];
+
 const nextConfig: NextConfig = {
   // PGlite ships a WASM build and sharp ships native bindings; both must run
   // in the Node.js runtime and must not be bundled by the server compiler.
@@ -16,12 +49,20 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      ...adminCorsHeaders,
       {
         source: "/api/v1/public/:path*",
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
           { key: "Access-Control-Allow-Methods", value: "GET, POST, OPTIONS" },
           { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+        ],
+      },
+      {
+        source: "/uploads/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
         ],
       },
       {

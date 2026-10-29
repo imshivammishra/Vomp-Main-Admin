@@ -17,8 +17,10 @@ import type {
   VenueStatus,
 } from "@/types";
 
-// Same-origin by default. NEXT_PUBLIC_API_URL is only needed when the admin UI
-// and API are served from different origins; the session cookie is HttpOnly.
+// Same-origin by default. NEXT_PUBLIC_API_URL points at the dedicated API
+// sub-domain (e.g. https://dev.api.venueonmyplate.com) when the admin UI and
+// API are served from different origins; the session cookie is HttpOnly and is
+// shared across sub-domains via SESSION_COOKIE_DOMAIN.
 const API = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
 
 export class ApiError extends Error {
@@ -46,7 +48,10 @@ async function request<T>(
     res = await fetch(`${API}${path}`, {
       method,
       headers,
-      credentials: "same-origin",
+      // "include" so the HttpOnly session cookie is sent even when the admin UI
+      // (dev-admin.venueonmyplate.com) and the API (dev.api.venueonmyplate.com)
+      // are on different sub-domains. Same-origin deployments are unaffected.
+      credentials: "include",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
@@ -313,7 +318,7 @@ export const healthApi = {
   check: async (): Promise<HealthStatus> => {
     const response = await fetch(`${API}/api/health`, {
       cache: "no-store",
-      credentials: "same-origin",
+      credentials: "include",
     });
     return (await response.json()) as HealthStatus;
   },
