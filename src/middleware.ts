@@ -93,9 +93,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname === "/login" && hasSession) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+  // NOTE: we intentionally do NOT redirect /login → /dashboard here based on
+  // cookie presence. The edge middleware cannot validate a session (no DB, and
+  // the API is cross-origin in production), so a stale-but-present cookie would
+  // bounce /login → /dashboard while the API returns 401 and the client sends
+  // the user back to /login — an endless refresh loop. The login page instead
+  // checks the real session client-side and redirects when it is actually valid.
 
   return NextResponse.next();
 }

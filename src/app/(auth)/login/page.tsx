@@ -7,7 +7,7 @@ import {
   ScrollText, Loader2, Check,
 } from "lucide-react";
 import { authApi } from "@/lib/api";
-import { clearAuthCache } from "@/lib/auth";
+import { clearAuthCache, fetchCurrentUser } from "@/lib/auth";
 
 const FEATURES = [
   "Full venue CRUD with image upload",
@@ -50,8 +50,23 @@ export default function LoginPage() {
   useEffect(() => {
     const next = new URLSearchParams(window.location.search).get("next");
     // Only allow same-site relative paths to prevent open redirects.
-    if (next && next.startsWith("/") && !next.startsWith("//")) setNextPath(next);
-  }, []);
+    const target =
+      next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+    setNextPath(target);
+
+    // If a VALID session already exists, go straight into the app. This replaces
+    // the old middleware /login → /dashboard redirect, which bounced on a stale
+    // cookie and caused an endless refresh loop. fetchCurrentUser never throws,
+    // so a stale/expired cookie simply leaves the user on the login form (and the
+    // 401 clears that cookie server-side).
+    let cancelled = false;
+    fetchCurrentUser().then((user) => {
+      if (!cancelled && user) router.replace(target);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
