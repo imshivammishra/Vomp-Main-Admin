@@ -37,16 +37,22 @@ export async function POST(req: NextRequest) {
       status: "new",
     });
 
-    await auditDb.record({
-      action: "enquiry.create",
-      resourceType: "enquiry",
-      resourceId: enquiry.id,
-      outcome: "success",
-      summary: { source: enquiry.source, venue: enquiry.venueName ?? "" },
-      ip,
-    });
+    // Audit logging must never break a successful enquiry submission.
+    try {
+      await auditDb.record({
+        action: "enquiry.create",
+        resourceType: "enquiry",
+        resourceId: enquiry.id,
+        outcome: "success",
+        summary: { source: enquiry.source, venue: enquiry.venueName ?? "" },
+        ip,
+      });
+    } catch (auditError) {
+      console.error("[enquiry] audit log failed (non-fatal)", auditError);
+    }
     return ok(enquiry, 201);
   } catch (error) {
+    console.error("[enquiry] create failed", error);
     return handleError(error);
   }
 }

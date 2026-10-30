@@ -87,6 +87,13 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   ip            text NOT NULL DEFAULT '',
   created_at    timestamptz NOT NULL DEFAULT now()
 );
+-- Self-healing migrations for databases created by an earlier schema version.
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS actor_email   text NOT NULL DEFAULT '';
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS resource_type text NOT NULL DEFAULT '';
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS resource_id   text NOT NULL DEFAULT '';
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS outcome       text NOT NULL DEFAULT 'success';
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS summary       jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS ip            text NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS audit_logs_created_idx ON audit_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS audit_logs_resource_idx ON audit_logs(resource_type, resource_id);
 
@@ -469,6 +476,21 @@ CREATE TABLE IF NOT EXISTS enquiries (
   created_at  timestamptz NOT NULL DEFAULT now(),
   updated_at  timestamptz NOT NULL DEFAULT now()
 );
+-- Self-healing migrations: add any columns missing on databases created by an
+-- earlier schema version (CREATE TABLE IF NOT EXISTS never alters an existing
+-- table, so these keep production in sync and prevent enquiry INSERT failures).
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS phone       text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS email       text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS city        text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS event_type  text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS event_date  text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS guest_count text NOT NULL DEFAULT '';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS message     text;
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS venue_name  text;
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS source      text NOT NULL DEFAULT 'website';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS status      text NOT NULL DEFAULT 'new';
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS created_at  timestamptz NOT NULL DEFAULT now();
+ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS updated_at  timestamptz NOT NULL DEFAULT now();
 CREATE INDEX IF NOT EXISTS enquiries_status_idx ON enquiries(status, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS notifications (
